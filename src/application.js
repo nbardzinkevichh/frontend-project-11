@@ -13,9 +13,20 @@ const app = (initialState = {}) => {
 
   const watchedState = render(state);
 
+  const isRssLink = (link) => fetch(link)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network error');
+      }
+      return response.text();
+    })
+    .then((text) => text.includes('<rss>') || text.includes('<feed>'))
+    .catch((err) => console.log(err));
+
   const schema = yup.object().shape({
     url: yup.string()
-      .url('Ссылка должна быть валидным URL'),
+      .url('Ссылка должна быть валидным URL')
+      .test('isRss', 'Ресурс не содержит валидный RSS', (link) => isRssLink(link)),
   });
 
   const validate = (url) => {
@@ -28,7 +39,7 @@ const app = (initialState = {}) => {
         if (!urls.includes(value.url)) {
           watchedState.rssLinks.push(value);
         } else {
-          throw Error('RSS уже существует');
+          throw new Error('RSS уже существует');
         }
       })
       .catch((err) => {
