@@ -16,8 +16,13 @@ export default (state) => {
         const errorMessage = document.querySelector('.feedback');
         form.reset();
         input.focus();
-        errorMessage.remove();
-        input.classList.remove('is-invalid');
+        if (errorMessage) {
+          errorMessage.remove();
+          input.classList.remove('is-invalid');
+        }
+      }
+      if (value === 'processed') {
+        console.log(1);
       }
     }
   };
