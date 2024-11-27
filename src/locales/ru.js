@@ -8,10 +8,13 @@ export default {
       // leadParagraph: 'Начните читать RSS сегодня! Это легко, это красиво.',
       form: {
         button: 'Добавить',
-        errors: {
-          urlIsNotValid: 'Ссылка должна быть валидным URL',
-          urlIsExists: 'RSS уже существует',
-          urlIsNotContainRSS: 'Ресурс не содержит валидный RSS',
+        infoMessages: {
+          errors: {
+            urlIsNotValid: 'Ссылка должна быть валидным URL',
+            urlIsExists: 'RSS уже существует',
+            urlIsNotContainRSS: 'Ресурс не содержит валидный RSS',
+          },
+          success: 'RSS успешно загружен',
         },
       },
     },

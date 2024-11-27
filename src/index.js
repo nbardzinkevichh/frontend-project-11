@@ -3,8 +3,4 @@ import './style.css';
 
 import app from './application.js';
 
-const initialState = {
-  rssLinks: [],
-};
-
-app(initialState);
+app();
