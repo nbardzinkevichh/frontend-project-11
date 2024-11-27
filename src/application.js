@@ -18,8 +18,7 @@ i18nextInstance.init({
   },
 });
 
-const app = (initialState = {}) => {
-  // const defaultId = uniqueId();
+const app = () => {
   const state = {
     rssLinks: [],
     feeds: [],
@@ -42,7 +41,6 @@ const app = (initialState = {}) => {
       watchedState.feeds.push(feed);
       watchedState.posts.push(...posts);
       watchedState.registrationProcess.state = 'processed';
-      console.log(state);
     });
 
   const isRssLink = (link) => fetch(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(link)}`)
@@ -63,10 +61,10 @@ const app = (initialState = {}) => {
     .url()
     .test('isRss', i18nextInstance.t('header.form.infoMessages.errors.urlIsNotContainRSS'), (link) => isRssLink(link));
   const validate = (url) => {
+    watchedState.registrationProcess.state = 'processing';
     schema
       .validate(url)
       .then((value) => {
-        watchedState.registrationProcess.state = 'processing';
         // const urls = state.rssLinks.map((link) => link.url);
         if (state.rssLinks.includes(value)) {
           const urlAlreadyExists = i18nextInstance.t('header.form.infoMessages.errors.urlIsExists');

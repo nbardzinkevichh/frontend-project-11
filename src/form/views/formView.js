@@ -1,5 +1,44 @@
 import onChange from "on-change";
 
+const buildModalWindow = (container, title, description) => {
+  container.innerHTML = '';
+  const modal = document.createElement('div');
+  modal.classList.add('modal', 'fade');
+  modal.id = 'modal';
+  modal.setAttribute('tabindex', '-1');
+  modal.setAttribute('aria-labelledby', 'modalLabel');
+  modal.setAttribute('aria-hidden', 'true');
+  const modalDialog = document.createElement('div');
+  const modalContent = document.createElement('div');
+  const modalHeader = document.createElement('div');
+  const modalTitle = document.createElement('h5');
+  modalTitle.classList.add('modal-title');
+  modalTitle.id = 'modalLabel';
+  modalTitle.textContent = title;
+  const modalCloseButton = document.createElement('button');
+  modalCloseButton.setAttribute('type', 'button');
+  modalCloseButton.setAttribute('aria-label', 'Close');
+  modalCloseButton.classList.add('btn-close');
+  modalCloseButton.dataset.bsDismiss = 'modal';
+  modalHeader.append(modalTitle, modalCloseButton);
+
+  const modalBody = document.createElement('div');
+  const modalBodyP = document.createElement('p');
+  modalBodyP.textContent = description;
+  modalBody.append(modalBodyP);
+
+  const modalFooter = document.createElement('div');
+  const modalFooterBtn = document.createElement('button');
+  const modalFooterCloseButton = document.createElement('button');
+
+  modalFooter.append(modalFooterBtn, modalFooterCloseButton);
+  modalContent.append(modalHeader, modalBody, modalFooter);
+  modalDialog.append(modalContent);
+
+  modal.append(modalDialog);
+  return modal;
+};
+
 const buildCardStructure = (title) => {
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
@@ -26,9 +65,10 @@ const renderPosts = (state, container) => {
   state.posts.forEach((item) => {
     const element = document.createElement('li');
     const elementLink = document.createElement('a');
-    const title = item.length > 62 ? `${item.slice(0, 62)}...` : item;
+    // const title = item.title.length > 62 ? `${item.slice(0, 62)}...` : item.title;
+    const { title } = item;
     elementLink.textContent = title;
-    elementLink.setAttribute('href', item);
+    elementLink.setAttribute('href', item.link);
     elementLink.setAttribute('target', '_blank');
     elementLink.setAttribute('rel', 'noopener noreferrer');
     elementLink.classList.add('fw-bold');
@@ -43,6 +83,9 @@ const renderPosts = (state, container) => {
     element.append(viewButton);
     group.append(element);
   });
+
+  // const modal = document.get
+
   container.append(card);
 };
 
@@ -51,9 +94,6 @@ const renderFeeds = (state, container) => {
   const card = buildCardStructure('Фиды');
   container.append(card);
   const groups = document.querySelectorAll('.list-group');
-  console.log(groups);
-
-
   state.feeds.forEach((item) => {
     console.log(item);
     const element = document.createElement('li');
@@ -80,6 +120,7 @@ export default (state) => {
     const form = document.querySelector('form');
     const infoMessage = document.createElement('p');
     infoMessage.classList.add('feedback', 'm-0', 'position-absolute', 'small');
+    const errorMessage = document.querySelector('.feedback');
     if (path === 'registrationProcess.state') {
       if (value === 'failed') {
         // const pError = document.createElement('p');
@@ -89,7 +130,6 @@ export default (state) => {
         input.classList.add('is-invalid');
       }
       if (value === 'processing') {
-        const errorMessage = document.querySelector('.feedback');
         form.reset();
         input.focus();
         if (errorMessage) {
@@ -98,6 +138,10 @@ export default (state) => {
         }
       }
       if (value === 'processed') {
+        if (errorMessage) {
+          errorMessage.remove();
+          input.classList.remove('is-invalid');
+        }
         infoMessage.classList.add('text-success');
         infoMessage.innerHTML = state.registrationProcess.infoMessage;
         form.insertAdjacentElement('afterend', infoMessage);
