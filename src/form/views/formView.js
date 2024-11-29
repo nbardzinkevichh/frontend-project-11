@@ -1,43 +1,50 @@
 import onChange from "on-change";
+import { Modal } from "bootstrap";
 
-const buildModalWindow = (container, title, description) => {
-  container.innerHTML = '';
-  const modal = document.createElement('div');
-  modal.classList.add('modal', 'fade');
-  modal.id = 'modal';
-  modal.setAttribute('tabindex', '-1');
-  modal.setAttribute('aria-labelledby', 'modalLabel');
-  modal.setAttribute('aria-hidden', 'true');
-  const modalDialog = document.createElement('div');
-  const modalContent = document.createElement('div');
-  const modalHeader = document.createElement('div');
-  const modalTitle = document.createElement('h5');
-  modalTitle.classList.add('modal-title');
-  modalTitle.id = 'modalLabel';
-  modalTitle.textContent = title;
-  const modalCloseButton = document.createElement('button');
-  modalCloseButton.setAttribute('type', 'button');
-  modalCloseButton.setAttribute('aria-label', 'Close');
-  modalCloseButton.classList.add('btn-close');
-  modalCloseButton.dataset.bsDismiss = 'modal';
-  modalHeader.append(modalTitle, modalCloseButton);
+// const buildModalWindow = () => {
+//   // container.innerHTML = '';
+//   const modal = document.createElement('div');
+//   modal.classList.add('modal', 'fade');
+//   modal.id = 'modal';
+//   modal.setAttribute('tabindex', '-1');
+//   modal.setAttribute('aria-labelledby', 'modalLabel');
+//   modal.setAttribute('aria-hidden', 'true');
+//   const modalDialog = document.createElement('div');
+//   modalDialog.classList.add('modal-dialog');
+//   modalDialog.setAttribute('role', 'document');
+//   const modalContent = document.createElement('div');
+//   modalContent.classList.add('modal-content');
+//   const modalHeader = document.createElement('div');
+//   const modalTitle = document.createElement('h5');
+//   modalTitle.classList.add('modal-title');
+//   modalTitle.id = 'modalLabel';
+//   // modalTitle.textContent = title;
+//   const modalCloseButton = document.createElement('button');
+//   modalCloseButton.setAttribute('type', 'button');
+//   modalCloseButton.setAttribute('aria-label', 'Close');
+//   modalCloseButton.classList.add('btn-close');
+//   modalCloseButton.dataset.bsDismiss = 'modal';
+//   modalHeader.append(modalTitle, modalCloseButton);
 
-  const modalBody = document.createElement('div');
-  const modalBodyP = document.createElement('p');
-  modalBodyP.textContent = description;
-  modalBody.append(modalBodyP);
+//   const modalBody = document.createElement('div');
+//   const modalBodyP = document.createElement('p');
+//   modalBodyP.id = 'modalBodyP';
+//   // modalBodyP.textContent = description;
+//   modalBody.append(modalBodyP);
 
-  const modalFooter = document.createElement('div');
-  const modalFooterBtn = document.createElement('button');
-  const modalFooterCloseButton = document.createElement('button');
+//   const modalFooter = document.createElement('div');
+//   const modalFooterBtn = document.createElement('button');
+//   const modalFooterCloseButton = document.createElement('button');
 
-  modalFooter.append(modalFooterBtn, modalFooterCloseButton);
-  modalContent.append(modalHeader, modalBody, modalFooter);
-  modalDialog.append(modalContent);
+//   modalFooter.append(modalFooterBtn, modalFooterCloseButton);
+//   modalContent.append(modalHeader, modalBody, modalFooter);
+//   modalDialog.append(modalContent);
 
-  modal.append(modalDialog);
-  return modal;
-};
+//   modal.append(modalDialog);
+//   // container.append(modal);
+//   console.log(modal);
+//   return modal;
+// };
 
 const buildCardStructure = (title) => {
   const card = document.createElement('div');
@@ -59,9 +66,11 @@ const buildCardStructure = (title) => {
 const renderPosts = (state, container) => {
   container.innerHTML = '';
   const card = buildCardStructure('Посты');
+  const modal = document.querySelector('.modal');
+  const modalWindow = new Modal(modal);
   container.append(card);
+  
   const group = document.querySelector('.list-group');
-  console.log(state.posts);
   state.posts.forEach((item) => {
     const element = document.createElement('li');
     const elementLink = document.createElement('a');
@@ -80,11 +89,16 @@ const renderPosts = (state, container) => {
     viewButton.textContent = 'Просмотр';
     viewButton.dataset.bsToggle = 'modal';
     viewButton.dataset.bsTarget = '#modal';
+    viewButton.addEventListener('click', () => {
+      const modalTitleText = document.getElementById('modalLabel');
+      const modalBodyPText = document.getElementById('modalBodyP');
+      modalTitleText.textContent = title;
+      modalBodyPText.textContent = item.description;
+      modalWindow.show();
+    });
     element.append(viewButton);
     group.append(element);
   });
-
-  // const modal = document.get
 
   container.append(card);
 };
@@ -123,7 +137,6 @@ export default (state) => {
     const errorMessage = document.querySelector('.feedback');
     if (path === 'registrationProcess.state') {
       if (value === 'failed') {
-        // const pError = document.createElement('p');
         infoMessage.classList.add('text-danger');
         infoMessage.innerHTML = state.registrationProcess.infoMessage.message;
         form.insertAdjacentElement('afterend', infoMessage);

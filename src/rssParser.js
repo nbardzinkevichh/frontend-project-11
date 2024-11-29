@@ -2,7 +2,6 @@ export default (text) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(text, 'application/xml');
   const parseError = doc.querySelector('parserror');
-  
   if (parseError) return new Error('Parse Error');
   const feedTitle = doc.querySelector('channel > title').textContent;
   const feedDescription = doc.querySelector('description').textContent;
