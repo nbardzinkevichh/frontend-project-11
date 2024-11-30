@@ -41,7 +41,7 @@ const renderPosts = (state, container) => {
     element.append(elementLink);
     // const readFullButton = document.querySelector('#readFullButton');
     // readFullButton.setAttribute('href', item.link);
-    // elementLink.setAttribute('target', '_blank');
+    // readFullButton.setAttribute('target', '_blank');
 
     const viewButton = document.createElement('button');
     viewButton.setAttribute('type', 'button');
@@ -58,10 +58,13 @@ const renderPosts = (state, container) => {
     });
     modal.addEventListener('shown.bs.modal', () => {
       const readInFullButton = document.querySelector('#readFullButton');
-      readInFullButton.addEventListener('click', (e) => {
-        console.log(elementLink);
-        window.open(item.link, '_blank');
-      });
+      readInFullButton.setAttribute('href', item.link);
+      readInFullButton.setAttribute('target', '_blank');
+
+      // readInFullButton.addEventListener('click', (e) => {
+      //   console.log(elementLink);
+      //   window.open(item.link, '_blank');
+      // });
     });
 
     element.append(viewButton);
