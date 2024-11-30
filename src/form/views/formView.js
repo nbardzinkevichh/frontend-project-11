@@ -1,51 +1,6 @@
 import onChange from "on-change";
 import { Modal } from "bootstrap";
 
-// const buildModalWindow = () => {
-//   // container.innerHTML = '';
-//   const modal = document.createElement('div');
-//   modal.classList.add('modal', 'fade');
-//   modal.id = 'modal';
-//   modal.setAttribute('tabindex', '-1');
-//   modal.setAttribute('aria-labelledby', 'modalLabel');
-//   modal.setAttribute('aria-hidden', 'true');
-//   const modalDialog = document.createElement('div');
-//   modalDialog.classList.add('modal-dialog');
-//   modalDialog.setAttribute('role', 'document');
-//   const modalContent = document.createElement('div');
-//   modalContent.classList.add('modal-content');
-//   const modalHeader = document.createElement('div');
-//   const modalTitle = document.createElement('h5');
-//   modalTitle.classList.add('modal-title');
-//   modalTitle.id = 'modalLabel';
-//   // modalTitle.textContent = title;
-//   const modalCloseButton = document.createElement('button');
-//   modalCloseButton.setAttribute('type', 'button');
-//   modalCloseButton.setAttribute('aria-label', 'Close');
-//   modalCloseButton.classList.add('btn-close');
-//   modalCloseButton.dataset.bsDismiss = 'modal';
-//   modalHeader.append(modalTitle, modalCloseButton);
-
-//   const modalBody = document.createElement('div');
-//   const modalBodyP = document.createElement('p');
-//   modalBodyP.id = 'modalBodyP';
-//   // modalBodyP.textContent = description;
-//   modalBody.append(modalBodyP);
-
-//   const modalFooter = document.createElement('div');
-//   const modalFooterBtn = document.createElement('button');
-//   const modalFooterCloseButton = document.createElement('button');
-
-//   modalFooter.append(modalFooterBtn, modalFooterCloseButton);
-//   modalContent.append(modalHeader, modalBody, modalFooter);
-//   modalDialog.append(modalContent);
-
-//   modal.append(modalDialog);
-//   // container.append(modal);
-//   console.log(modal);
-//   return modal;
-// };
-
 const buildCardStructure = (title) => {
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
@@ -69,7 +24,8 @@ const renderPosts = (state, container) => {
   const modal = document.querySelector('.modal');
   const modalWindow = new Modal(modal);
   container.append(card);
-  
+  // странная проблема с открытием ссылок в модальном окне при добавлении второй ссылки открывается ссылка из первой ссылки
+  // сделать функционал с постоянным добавлением обновлений
   const group = document.querySelector('.list-group');
   state.posts.forEach((item) => {
     const element = document.createElement('li');
@@ -83,6 +39,10 @@ const renderPosts = (state, container) => {
     elementLink.classList.add('fw-bold');
     element.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
     element.append(elementLink);
+    // const readFullButton = document.querySelector('#readFullButton');
+    // readFullButton.setAttribute('href', item.link);
+    // elementLink.setAttribute('target', '_blank');
+
     const viewButton = document.createElement('button');
     viewButton.setAttribute('type', 'button');
     viewButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
@@ -96,10 +56,17 @@ const renderPosts = (state, container) => {
       modalBodyPText.textContent = item.description;
       modalWindow.show();
     });
+    modal.addEventListener('shown.bs.modal', () => {
+      const readInFullButton = document.querySelector('#readFullButton');
+      readInFullButton.addEventListener('click', (e) => {
+        console.log(elementLink);
+        window.open(item.link, '_blank');
+      });
+    });
+
     element.append(viewButton);
     group.append(element);
   });
-
   container.append(card);
 };
 

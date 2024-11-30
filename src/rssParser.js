@@ -1,3 +1,5 @@
+import { uniq, uniqueId } from "lodash";
+
 export default (text) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(text, 'application/xml');
@@ -11,7 +13,7 @@ export default (text) => {
     const description = post.querySelector('description').textContent ?? '';
     const link = post.querySelector('link').textContent ?? '';
     return {
-      id: index,
+      id: uniqueId(`${link}_`),
       title,
       description,
       link,
