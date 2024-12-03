@@ -32,6 +32,11 @@ const app = () => {
 
   const watchedState = render(state);
 
+  // const axiosInstance = axios.create({
+  //   baseURL: `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(watchedState.registrationProcess.activeLink)}`,
+  //   timeout: 5000,
+  // });
+
   const getRssContent = () => axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(watchedState.registrationProcess.activeLink)}`)
     .then((response) => {
       const parsedData = rssParser(response.data.contents);
@@ -72,7 +77,7 @@ const app = () => {
         }
         watchedState.registrationProcess.infoMessage = i18nextInstance.t('header.form.infoMessages.success');
         watchedState.registrationProcess.activeLink = value;
-        getRssContent();
+        setTimeout(getRssContent, 1000);
       })
       .catch((err) => {
         watchedState.registrationProcess.infoMessage = err;

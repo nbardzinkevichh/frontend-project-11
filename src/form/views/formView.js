@@ -1,5 +1,5 @@
 import onChange from "on-change";
-import { Modal } from "bootstrap";
+import { Modal } from 'bootstrap';
 
 const buildCardStructure = (title) => {
   const card = document.createElement('div');
@@ -21,17 +21,29 @@ const buildCardStructure = (title) => {
 const renderPosts = (state, container) => {
   container.innerHTML = '';
   const card = buildCardStructure('Посты');
+
   const modal = document.querySelector('.modal');
   const modalWindow = new Modal(modal);
+  const modalTitleText = document.getElementById('modalLabel');
+  const modalBodyPText = document.getElementById('modalBodyP');
+
+  const showModal = (title, description) => {
+    modalTitleText.textContent = title;
+    modalBodyPText.textContent = description;
+    modalWindow.show();
+  };
+
   container.append(card);
   // странная проблема с открытием ссылок в модальном окне при добавлении второй ссылки открывается ссылка из первой ссылки
   // сделать функционал с постоянным добавлением обновлений
+
+  // const proxy = 'https://allorigins.hexlet.app/get?disableCache=true&url=';
+
   const group = document.querySelector('.list-group');
   state.posts.forEach((item) => {
     const element = document.createElement('li');
     const elementLink = document.createElement('a');
-    // const title = item.title.length > 62 ? `${item.slice(0, 62)}...` : item.title;
-    const { title } = item;
+    const title = item.title.length > 62 ? `${item.title.slice(0, 62)}...` : item.title;
     elementLink.textContent = title;
     elementLink.setAttribute('href', item.link);
     elementLink.setAttribute('target', '_blank');
@@ -39,37 +51,31 @@ const renderPosts = (state, container) => {
     elementLink.classList.add('fw-bold');
     element.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
     element.append(elementLink);
-    // const readFullButton = document.querySelector('#readFullButton');
-    // readFullButton.setAttribute('href', item.link);
-    // readFullButton.setAttribute('target', '_blank');
-
     const viewButton = document.createElement('button');
     viewButton.setAttribute('type', 'button');
     viewButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
     viewButton.textContent = 'Просмотр';
     viewButton.dataset.bsToggle = 'modal';
     viewButton.dataset.bsTarget = '#modal';
-    viewButton.addEventListener('click', () => {
-      const modalTitleText = document.getElementById('modalLabel');
-      const modalBodyPText = document.getElementById('modalBodyP');
-      modalTitleText.textContent = title;
-      modalBodyPText.textContent = item.description;
-      modalWindow.show();
-    });
-    modal.addEventListener('shown.bs.modal', () => {
-      const readInFullButton = document.querySelector('#readFullButton');
-      readInFullButton.setAttribute('href', item.link);
-      readInFullButton.setAttribute('target', '_blank');
-
-      // readInFullButton.addEventListener('click', (e) => {
-      //   console.log(elementLink);
-      //   window.open(item.link, '_blank');
-      // });
-    });
-
+    viewButton.dataset.id = item.id;
+    viewButton.dataset.link = item.link;
     element.append(viewButton);
     group.append(element);
   });
+  const viewModalButtons = document.querySelectorAll('.btn-outline-primary');
+  let url;
+  viewModalButtons.forEach((button) => {
+    button.addEventListener(('click'), (e) => {
+      const post = state.posts.find((element) => element.id === e.target.dataset.id);
+      url = e.target.dataset.link;
+      showModal(post.title, post.description);
+      const readInFullButton = document.querySelector('#readFullButton');
+      readInFullButton.setAttribute('href', url);
+      readInFullButton.setAttribute('target', '_blank');
+      readInFullButton.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+
   container.append(card);
 };
 
@@ -79,7 +85,6 @@ const renderFeeds = (state, container) => {
   container.append(card);
   const groups = document.querySelectorAll('.list-group');
   state.feeds.forEach((item) => {
-    console.log(item);
     const element = document.createElement('li');
     const header = document.createElement('h3');
     const p = document.createElement('p');
@@ -128,6 +133,7 @@ export default (state) => {
         infoMessage.classList.add('text-success');
         infoMessage.innerHTML = state.registrationProcess.infoMessage;
         form.insertAdjacentElement('afterend', infoMessage);
+        // setTimeout(renderPosts(state, postsContainer), 1000);
         renderPosts(state, postsContainer);
         renderFeeds(state, feedsContainer);
       }
