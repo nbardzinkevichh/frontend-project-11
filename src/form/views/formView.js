@@ -63,20 +63,27 @@ const renderPosts = (state, container) => {
     group.append(element);
   });
   const viewModalButtons = document.querySelectorAll('.btn-outline-primary');
-  // let url;
   viewModalButtons.forEach((button) => {
     button.addEventListener(('click'), (e) => {
       const post = state.posts.find((element) => element.id === e.target.dataset.id);
-      console.log(post.id);
+      console.log(post);
       const url = e.target.dataset.link;
       showModal(post.title, post.description);
-      // const postTitle = document.querySelector(`[href='${e.target.dataset.link}']`);
-      // console.log(postTitle);
-      // postTitle.styles.color = '#d3d3d3';
+      const postTitle = document.querySelector(`[href="${e.target.dataset.link}"]`);
+      postTitle.classList.remove('fw-bold');
+      postTitle.classList.add('fw-normal');
+      postTitle.style.color = '#d3d3d3';
       const readInFullButton = document.querySelector('#readFullButton');
       readInFullButton.setAttribute('href', url);
       readInFullButton.setAttribute('target', '_blank');
       readInFullButton.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+
+  const closeModalButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
+  closeModalButtons.forEach((button) => {
+    button.addEventListener(('click'), () => {
+      modalWindow.hide();
     });
   });
 

@@ -24,6 +24,7 @@ const app = () => {
     rssLinks: [],
     feeds: [],
     posts: [],
+    readPosts: [],
     registrationProcess: {
       infoMessage: '',
       state: 'filling',
