@@ -1,3 +1,5 @@
+devtool: "eval-cheap-source-map"
+
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 export default {
@@ -7,6 +9,11 @@ export default {
   },
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"],
+      },
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -26,6 +33,7 @@ export default {
         test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
         use: 'file-loader',
       },
+      
     ],
   },
   plugins: [

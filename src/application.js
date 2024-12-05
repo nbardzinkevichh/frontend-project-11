@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import axios from 'axios';
-import { uniqueId } from 'lodash';
+import _ from 'lodash';
+// import { uniqueId } from 'lodash';
 
 import i18next from 'i18next';
 import ru from './locales/ru.js';
@@ -25,27 +26,41 @@ const app = () => {
     posts: [],
     registrationProcess: {
       infoMessage: '',
-      state: 'filling', // 'processing', 'processed', 'failed'
+      state: 'filling',
       activeLink: '',
     },
   };
 
   const watchedState = render(state);
 
-  // const axiosInstance = axios.create({
-  //   baseURL: `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(watchedState.registrationProcess.activeLink)}`,
-  //   timeout: 5000,
-  // });
+  const { activeLink } = watchedState.registrationProcess.activeLink;
+
+  const isPostsEqualWithoutId = (obj1, obj2) => _.isEqual(_.omit(obj1, 'id'), _.omit(obj2, 'id'));
+  const hasNewData = (newData, currentData) => (
+    JSON.stringify(newData) !== JSON.stringify(currentData)
+  );
 
   const getRssContent = () => axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(watchedState.registrationProcess.activeLink)}`)
     .then((response) => {
       const parsedData = rssParser(response.data.contents);
       const { feed, posts } = parsedData;
-
-      watchedState.rssLinks.push(watchedState.registrationProcess.activeLink);
-      watchedState.feeds.push(feed);
-      watchedState.posts.push(...posts);
-      watchedState.registrationProcess.state = 'processed';
+      const postsWithId = posts.map((post) => ({ ...post, id: (post.id || _.uniqueId()) }));
+      if (!state.feeds.includes(_.find(state.feeds, feed))) {
+        watchedState.feeds.push(feed);
+      }
+      if (!state.rssLinks.includes(activeLink)) {
+        watchedState.rssLinks.push(activeLink);
+      }
+      if (hasNewData(postsWithId, state.posts)) {
+        const postsDifference = _.differenceWith(postsWithId, state.posts, isPostsEqualWithoutId);
+        watchedState.posts.unshift(...postsDifference);
+        watchedState.registrationProcess.state = 'processed';
+      }
+      watchedState.registrationProcess.state = '';
+    })
+    .catch((e) => console.log(e))
+    .finally(() => {
+      setTimeout(getRssContent, 5000);
     });
 
   const isRssLink = (link) => fetch(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(link)}`)
@@ -70,14 +85,13 @@ const app = () => {
     schema
       .validate(url)
       .then((value) => {
-        // const urls = state.rssLinks.map((link) => link.url);
         if (state.rssLinks.includes(value)) {
           const urlAlreadyExists = i18nextInstance.t('header.form.infoMessages.errors.urlIsExists');
           throw new Error(urlAlreadyExists);
         }
         watchedState.registrationProcess.infoMessage = i18nextInstance.t('header.form.infoMessages.success');
         watchedState.registrationProcess.activeLink = value;
-        setTimeout(getRssContent, 1000);
+        getRssContent();
       })
       .catch((err) => {
         watchedState.registrationProcess.infoMessage = err;
@@ -87,7 +101,6 @@ const app = () => {
   };
 
   const form = document.querySelector('form');
-
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);

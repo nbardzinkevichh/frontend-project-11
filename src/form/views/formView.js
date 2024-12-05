@@ -1,4 +1,5 @@
 import onChange from "on-change";
+
 import { Modal } from 'bootstrap';
 
 const buildCardStructure = (title) => {
@@ -34,10 +35,8 @@ const renderPosts = (state, container) => {
   };
 
   container.append(card);
-  // странная проблема с открытием ссылок в модальном окне при добавлении второй ссылки открывается ссылка из первой ссылки
   // сделать функционал с постоянным добавлением обновлений
-
-  // const proxy = 'https://allorigins.hexlet.app/get?disableCache=true&url=';
+  // реализация изменения вида ссылок, когда их посетили
 
   const group = document.querySelector('.list-group');
   state.posts.forEach((item) => {
@@ -63,12 +62,16 @@ const renderPosts = (state, container) => {
     group.append(element);
   });
   const viewModalButtons = document.querySelectorAll('.btn-outline-primary');
-  let url;
+  // let url;
   viewModalButtons.forEach((button) => {
     button.addEventListener(('click'), (e) => {
       const post = state.posts.find((element) => element.id === e.target.dataset.id);
-      url = e.target.dataset.link;
+      console.log(post.id);
+      const url = e.target.dataset.link;
       showModal(post.title, post.description);
+      // const postTitle = document.querySelector(`[href='${e.target.dataset.link}']`);
+      // console.log(postTitle);
+      // postTitle.styles.color = '#d3d3d3';
       const readInFullButton = document.querySelector('#readFullButton');
       readInFullButton.setAttribute('href', url);
       readInFullButton.setAttribute('target', '_blank');
@@ -110,7 +113,9 @@ export default (state) => {
     const infoMessage = document.createElement('p');
     infoMessage.classList.add('feedback', 'm-0', 'position-absolute', 'small');
     const errorMessage = document.querySelector('.feedback');
+    const loader = document.querySelector('.loader');
     if (path === 'registrationProcess.state') {
+      loader.classList.add('hidden');
       if (value === 'failed') {
         infoMessage.classList.add('text-danger');
         infoMessage.innerHTML = state.registrationProcess.infoMessage.message;
@@ -118,6 +123,7 @@ export default (state) => {
         input.classList.add('is-invalid');
       }
       if (value === 'processing') {
+        loader.classList.remove('hidden');
         form.reset();
         input.focus();
         if (errorMessage) {
@@ -133,7 +139,6 @@ export default (state) => {
         infoMessage.classList.add('text-success');
         infoMessage.innerHTML = state.registrationProcess.infoMessage;
         form.insertAdjacentElement('afterend', infoMessage);
-        // setTimeout(renderPosts(state, postsContainer), 1000);
         renderPosts(state, postsContainer);
         renderFeeds(state, feedsContainer);
       }
