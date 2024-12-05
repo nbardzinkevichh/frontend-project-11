@@ -1,6 +1,5 @@
- 
+/* eslint-disable no-param-reassign */
 import onChange from 'on-change';
-
 import { Modal } from 'bootstrap';
 
 const buildCardStructure = (title) => {

@@ -16,7 +16,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/dist/'],
+    ignores: ['**/dist/', 'webpack.config.js', './dist/', 'dist', '**/dist/*'],
   },
   {
     languageOptions: {
