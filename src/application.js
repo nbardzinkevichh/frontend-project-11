@@ -1,13 +1,9 @@
 import * as yup from 'yup';
 import axios from 'axios';
 import _ from 'lodash';
-// import { uniqueId } from 'lodash';
-
 import i18next from 'i18next';
 import ru from './locales/ru.js';
-
 import render from './form/views/formView.js';
-
 import rssParser from './rssParser.js';
 
 const i18nextInstance = i18next.createInstance();
@@ -39,30 +35,29 @@ const app = () => {
     JSON.stringify(newData) !== JSON.stringify(currentData)
   );
 
-  const getRssContent = () => axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(watchedState.registrationProcess.activeLink)}`)
-    .then((response) => {
-      const parsedData = rssParser(response.data.contents);
-      const { feed, posts } = parsedData;
-      const postsWithId = posts.map((post) => ({ ...post, id: (post.id || _.uniqueId()) }));
-      if (!state.feeds.includes(_.find(state.feeds, feed))) {
-        watchedState.feeds.push(feed);
-      }
-      if (!state.rssLinks.includes(watchedState.registrationProcess.activeLink)) {
-        watchedState.rssLinks.push(watchedState.registrationProcess.activeLink);
-      }
-      if (hasNewData(postsWithId, state.posts)) {
-        const postsDifference = _.differenceWith(postsWithId, state.posts, isPostsEqualWithoutId);
-        watchedState.posts.unshift(...postsDifference);
-        watchedState.registrationProcess.state = 'processed';
-      }
-      watchedState.registrationProcess.state = '';
-    })
-    .catch(() => {
-      throw new Error(i18nextInstance.t('networkErrors.networkError'));
-    })
-    .finally(() => {
-      setTimeout(getRssContent, 5000);
-    });
+  const getRssContent = () => state.rssLinks.forEach((link) => {
+    axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(link)}`)
+      .then((response) => {
+        const parsedData = rssParser(response.data.contents);
+        const { feed, posts } = parsedData;
+        const postsWithId = posts.map((post) => ({ ...post, id: (post.id || _.uniqueId()) }));
+        if (!state.feeds.includes(_.find(state.feeds, feed))) {
+          watchedState.feeds.push(feed);
+        }
+        if (hasNewData(postsWithId, state.posts)) {
+          const postsDifference = _.differenceWith(postsWithId, state.posts, isPostsEqualWithoutId);
+          watchedState.posts.unshift(...postsDifference);
+          watchedState.registrationProcess.state = 'processed';
+        }
+        watchedState.registrationProcess.state = '';
+      })
+      .catch(() => {
+        throw new Error(i18nextInstance.t('networkErrors.networkError'));
+      })
+      .finally(() => {
+        setTimeout(getRssContent, 5000);
+      });
+  });
 
   const isRssLink = (link) => axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(link)}`)
     .then((response) => {
@@ -88,11 +83,11 @@ const app = () => {
     schema
       .validate(url)
       .then((value) => {
-        console.log(state.rssLinks);
         if (state.rssLinks.includes(value)) {
           const urlAlreadyExists = i18nextInstance.t('header.form.infoMessages.errors.urlIsExists');
           throw new Error(urlAlreadyExists);
         }
+        watchedState.rssLinks.push(value);
         watchedState.registrationProcess.infoMessage = i18nextInstance.t('header.form.infoMessages.success');
         watchedState.registrationProcess.activeLink = value;
         getRssContent();

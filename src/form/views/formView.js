@@ -79,9 +79,7 @@ const renderPosts = (state, container) => {
 
   const closeModalButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
   closeModalButtons.forEach((button) => {
-    button.addEventListener(('click'), () => {
-      modalWindow.hide();
-    });
+    button.addEventListener(('click'), () => modalWindow.hide());
   });
 
   container.append(card);
