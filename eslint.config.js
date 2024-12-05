@@ -13,9 +13,10 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: pluginJs.configs.recommended,
 });
+const gitignorePath = path.resolve(__dirname, ".gitignore");
 
 export default [
-  includeIgnoreFile('./.gitignore'),
+  includeIgnoreFile(gitignorePath),
   {
     languageOptions: {
       globals: {
