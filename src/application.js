@@ -48,8 +48,8 @@ const app = () => {
       if (!state.feeds.includes(_.find(state.feeds, feed))) {
         watchedState.feeds.push(feed);
       }
-      if (!state.rssLinks.includes(activeLink)) {
-        watchedState.rssLinks.push(activeLink);
+      if (!state.rssLinks.includes(watchedState.registrationProcess.activeLink)) {
+        watchedState.rssLinks.push(watchedState.registrationProcess.activeLink);
       }
       if (hasNewData(postsWithId, state.posts)) {
         const postsDifference = _.differenceWith(postsWithId, state.posts, isPostsEqualWithoutId);
@@ -85,6 +85,7 @@ const app = () => {
     schema
       .validate(url)
       .then((value) => {
+        console.log(state.rssLinks);
         if (state.rssLinks.includes(value)) {
           const urlAlreadyExists = i18nextInstance.t('header.form.infoMessages.errors.urlIsExists');
           throw new Error(urlAlreadyExists);
