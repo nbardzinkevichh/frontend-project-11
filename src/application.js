@@ -63,10 +63,10 @@ const app = () => {
       setTimeout(getRssContent, 5000);
     });
 
-  const isRssLink = (link) => fetch(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(link)}`)
+  const isRssLink = (link) => axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(link)}`)
     .then((response) => {
       if (response.ok) return response.text();
-      throw new Error(i18nextInstance.t('header.networkErrors.networkError'));
+      throw new Error(i18nextInstance.t('networkErrors.networkError'));
     })
     .then((text) => text.includes('<rss') || text.includes('<feed'))
     .catch((err) => console.log(err));
