@@ -1,5 +1,5 @@
 import globals from 'globals';
-
+import { includeIgnoreFile } from "@eslint/compat";
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { FlatCompat } from '@eslint/eslintrc';
@@ -15,6 +15,7 @@ const compat = new FlatCompat({
 });
 
 export default [
+  includeIgnoreFile('./.gitignore'),
   {
     languageOptions: {
       globals: {
