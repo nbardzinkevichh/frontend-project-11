@@ -16,7 +16,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/.dist/', 'node_modules/', 'eslint.config.js', 'webpack.config.js'],
+    ignores: ['dist/'],
   },
   {
     languageOptions: {
