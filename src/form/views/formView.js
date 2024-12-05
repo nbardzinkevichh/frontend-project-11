@@ -1,4 +1,5 @@
-import onChange from "on-change";
+/* eslint-disable no-param-reassign */
+import onChange from 'on-change';
 
 import { Modal } from 'bootstrap';
 
@@ -104,7 +105,7 @@ const renderFeeds = (state, container) => {
 };
 
 export default (state) => {
-  const render = (path, value, previousValue) => {
+  const render = (path, value) => {
     const postsContainer = document.querySelector('.posts');
     const feedsContainer = document.querySelector('.feeds');
 
