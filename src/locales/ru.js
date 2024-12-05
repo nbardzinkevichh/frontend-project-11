@@ -4,8 +4,6 @@ export default {
       networkError: 'Ошибка сети',
     },
     header: {
-      // title: 'RSS агрегатор',
-      // leadParagraph: 'Начните читать RSS сегодня! Это легко, это красиво.',
       form: {
         button: 'Добавить',
         infoMessages: {
