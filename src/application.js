@@ -65,7 +65,7 @@ const app = () => {
 
   const isRssLink = (link) => axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(link)}`)
     .then((response) => {
-      if (response.ok) return response.text();
+      if (response) return response.data.contents;
       throw new Error(i18nextInstance.t('networkErrors.networkError'));
     })
     .then((text) => text.includes('<rss') || text.includes('<feed'))
