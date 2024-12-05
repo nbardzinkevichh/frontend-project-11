@@ -58,7 +58,9 @@ const app = () => {
       }
       watchedState.registrationProcess.state = '';
     })
-    .catch((e) => console.log(e))
+    .catch((e) => {
+      throw new Error(i18nextInstance.t('networkErrors.networkError'));
+    })
     .finally(() => {
       setTimeout(getRssContent, 5000);
     });
