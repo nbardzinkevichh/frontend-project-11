@@ -33,8 +33,6 @@ const app = () => {
 
   const watchedState = render(state);
 
-  const { activeLink } = watchedState.registrationProcess.activeLink;
-
   const isPostsEqualWithoutId = (obj1, obj2) => _.isEqual(_.omit(obj1, 'id'), _.omit(obj2, 'id'));
   const hasNewData = (newData, currentData) => (
     JSON.stringify(newData) !== JSON.stringify(currentData)
@@ -58,7 +56,7 @@ const app = () => {
       }
       watchedState.registrationProcess.state = '';
     })
-    .catch((e) => {
+    .catch(() => {
       throw new Error(i18nextInstance.t('networkErrors.networkError'));
     })
     .finally(() => {
@@ -71,7 +69,9 @@ const app = () => {
       throw new Error(i18nextInstance.t('networkErrors.networkError'));
     })
     .then((text) => text.includes('<rss') || text.includes('<feed'))
-    .catch((err) => console.log(err));
+    .catch(() => {
+      throw new Error(i18nextInstance.t('networkErrors.networkError'));
+    });
 
   yup.setLocale({
     string: {
