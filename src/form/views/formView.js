@@ -36,8 +36,6 @@ const renderPosts = (state, container) => {
   };
 
   container.append(card);
-  // сделать функционал с постоянным добавлением обновлений
-  // реализация изменения вида ссылок, когда их посетили
 
   const group = document.querySelector('.list-group');
   state.posts.forEach((item) => {
