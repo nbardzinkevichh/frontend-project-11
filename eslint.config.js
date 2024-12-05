@@ -57,7 +57,4 @@ export default [
       'import/no-extraneous-dependencies': 'off',
     },
   },
-  {
-    ignores: ['**/.dist/', './dist/', 'dist/'],
-  },
 ];
