@@ -16,9 +16,6 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['dist/'],
-  },
-  {
     languageOptions: {
       globals: {
         ...globals.node,
@@ -57,5 +54,8 @@ export default [
       'no-console': 'off',
       'import/no-extraneous-dependencies': 'off',
     },
+  },
+  {
+    ignores: ['**/.dist/', './dist/', 'dist/'],
   },
 ];
